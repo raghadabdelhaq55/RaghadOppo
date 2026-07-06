@@ -2,16 +2,31 @@
 // No I/O, no DOM — this is what the tests in /test cover.
 
 /**
- * Split a total amount into `n` equal shares (in dollars, rounded to cents).
- *
- * ⚠️ Known bug (issue #1): this rounds each share independently, so the shares
- * don't always add back up to the original total. e.g. splitAmount(10, 3)
- * returns [3.33, 3.33, 3.33] which sums to 9.99, not 10.00.
+ * Split a total amount into `n` shares (in dollars) that always sum back to
+ * the original total. When the amount doesn't divide evenly, the leftover
+ * cents are handed out one per share (largest-remainder method), so e.g.
+ * splitAmount(10, 3) returns [3.34, 3.33, 3.33] which sums to exactly 10.00.
  */
 function splitAmount(total, n) {
   if (n <= 0) throw new Error("n must be a positive number");
-  const share = Math.round((total / n) * 100) / 100;
-  return Array(n).fill(share);
+
+  // Work in whole cents so we never lose a fraction of a penny to
+  // floating-point rounding. `base` is the floor share each person gets;
+  // `remainder` is the leftover cents that don't divide evenly (0..n-1).
+  const totalCents = Math.round(total * 100);
+  const base = Math.floor(totalCents / n);
+  const remainder = totalCents - base * n;
+
+  // Every share gets `base` cents; the first `remainder` shares each get one
+  // extra cent. That hands out exactly `remainder` leftover cents, so the
+  // shares sum back to `totalCents` (and therefore to the original total).
+  const shares = [];
+  for (let i = 0; i < n; i++) {
+    const cents = base + (i < remainder ? 1 : 0);
+    shares.push(cents / 100);
+  }
+
+  return shares;
 }
 
 /**
