@@ -85,8 +85,7 @@ function render(state) {
         ${Object.entries(balances)
           .map(([name, bal]) => {
             const cls = bal > 0 ? "owed" : bal < 0 ? "owes" : "even";
-            const label =
-              bal > 0 ? `is owed ${money(bal)}` : bal < 0 ? `owes ${money(-bal)}` : "is settled up";
+            const label = bal > 0 ? `is owed ${money(bal)}` : bal < 0 ? `owes ${money(-bal)}` : "is settled up";
             return `<li class="${cls}"><strong>${name}</strong> ${label}</li>`;
           })
           .join("")}
