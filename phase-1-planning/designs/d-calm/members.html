@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Members · Calm · Bill Splitter v2</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --ground:#E7EDEF;
+    --grad-1:rgba(25,158,151,.16); --grad-2:rgba(94,140,200,.14);
+    --surface:rgba(255,255,255,.60); --surface-2:rgba(255,255,255,.40); --surface-solid:#fff;
+    --glass-border:rgba(255,255,255,.70); --line:rgba(20,45,45,.10); --hair:rgba(20,45,45,.09);
+    --ink:#17282B; --ink-soft:#54686B; --ink-faint:#8AA0A2;
+    --accent:#199E97; --accent-ink:#127C76; --accent-soft:rgba(25,158,151,.14);
+    --pos:#1F9B83; --pos-soft:rgba(31,155,131,.14); --neg:#D76B60; --neg-soft:rgba(215,107,96,.14);
+    --warn:#B07D2B; --warn-soft:rgba(176,125,43,.16);
+    --radius:22px; --radius-sm:14px; --blur:saturate(160%) blur(20px);
+    --shadow:0 2px 6px rgba(20,50,50,.05), 0 22px 44px -16px rgba(20,50,50,.22);
+    --sans:-apple-system,"SF Pro Display",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){:root{
+    --ground:#0C1416; --grad-1:rgba(47,166,160,.20); --grad-2:rgba(80,110,190,.18);
+    --surface:rgba(28,40,43,.55); --surface-2:rgba(40,54,57,.42); --surface-solid:#1b2629;
+    --glass-border:rgba(255,255,255,.10); --line:rgba(255,255,255,.09); --hair:rgba(255,255,255,.08);
+    --ink:#E9F1F1; --ink-soft:#9FB3B4; --ink-faint:#6C8082;
+    --accent:#43CABF; --accent-ink:#6FE0D6; --accent-soft:rgba(67,202,191,.16);
+    --pos:#49C2A6; --pos-soft:rgba(73,194,166,.16); --neg:#E88B81; --neg-soft:rgba(232,139,129,.16);
+    --warn:#D8B36A; --warn-soft:rgba(216,179,106,.18);
+    --shadow:0 2px 6px rgba(0,0,0,.3), 0 24px 48px -16px rgba(0,0,0,.55);
+  }}
+  :root[data-theme="light"]{
+    --ground:#E7EDEF; --grad-1:rgba(25,158,151,.16); --grad-2:rgba(94,140,200,.14);
+    --surface:rgba(255,255,255,.60); --surface-2:rgba(255,255,255,.40); --surface-solid:#fff;
+    --glass-border:rgba(255,255,255,.70); --line:rgba(20,45,45,.10); --hair:rgba(20,45,45,.09);
+    --ink:#17282B; --ink-soft:#54686B; --ink-faint:#8AA0A2;
+    --accent:#199E97; --accent-ink:#127C76; --accent-soft:rgba(25,158,151,.14);
+    --pos:#1F9B83; --pos-soft:rgba(31,155,131,.14); --neg:#D76B60; --neg-soft:rgba(215,107,96,.14);
+    --warn:#B07D2B; --warn-soft:rgba(176,125,43,.16);
+    --shadow:0 2px 6px rgba(20,50,50,.05), 0 22px 44px -16px rgba(20,50,50,.22);
+  }
+  :root[data-theme="dark"]{
+    --ground:#0C1416; --grad-1:rgba(47,166,160,.20); --grad-2:rgba(80,110,190,.18);
+    --surface:rgba(28,40,43,.55); --surface-2:rgba(40,54,57,.42); --surface-solid:#1b2629;
+    --glass-border:rgba(255,255,255,.10); --line:rgba(255,255,255,.09); --hair:rgba(255,255,255,.08);
+    --ink:#E9F1F1; --ink-soft:#9FB3B4; --ink-faint:#6C8082;
+    --accent:#43CABF; --accent-ink:#6FE0D6; --accent-soft:rgba(67,202,191,.16);
+    --pos:#49C2A6; --pos-soft:rgba(73,194,166,.16); --neg:#E88B81; --neg-soft:rgba(232,139,129,.16);
+    --warn:#D8B36A; --warn-soft:rgba(216,179,106,.18);
+    --shadow:0 2px 6px rgba(0,0,0,.3), 0 24px 48px -16px rgba(0,0,0,.55);
+  }
+  body{
+    background:
+      radial-gradient(1100px 700px at 10% -10%, var(--grad-1), transparent 60%),
+      radial-gradient(1000px 680px at 95% 4%, var(--grad-2), transparent 60%),
+      var(--ground);
+    background-attachment: fixed;
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    :root{ --surface:rgba(255,255,255,.94); --surface-2:rgba(255,255,255,.88); }
+    :root[data-theme="dark"]{ --surface:rgba(28,40,43,.95); --surface-2:rgba(40,54,57,.92); }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{color:var(--ink); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+  .wrap{max-width:560px; margin:0 auto; padding:16px 22px 80px}
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:6px 0 18px}
+  .close{display:inline-flex; align-items:center; gap:7px; color:var(--ink-soft); text-decoration:none; font-size:.9rem; padding:6px 8px; border-radius:9px}
+  .close:hover{background:var(--surface-2); color:var(--ink)}
+  .toggle{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--glass-border); background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); color:var(--ink-soft); border-radius:999px; padding:6px 11px; font:inherit; font-size:.8rem; cursor:pointer}
+  .toggle svg{width:15px;height:15px}
+  .toggle:hover{color:var(--ink)}
+
+  h1{font-family:var(--sans); font-weight:700; font-size:2rem; line-height:1.14; margin:0 0 6px; letter-spacing:-.02em}
+  .lede{color:var(--ink-soft); margin:0 0 8px; font-size:1.02rem}
+  .owner-note{display:inline-flex; align-items:center; gap:7px; color:var(--ink-soft); font-size:.82rem; background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:999px; padding:4px 11px; margin-bottom:24px}
+  .owner-note svg{width:14px;height:14px; color:var(--accent)}
+  h2{font-family:var(--sans); font-weight:700; letter-spacing:-.02em; font-size:1.2rem; margin:36px 0 6px}
+  .sub{color:var(--ink-soft); margin:0 0 16px; font-size:.9rem}
+
+  .card{background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+  .m-row{display:flex; align-items:center; gap:13px; padding:15px 18px; border-bottom:1px solid var(--hair)}
+  .m-row:last-child{border-bottom:none}
+  .mini{width:38px;height:38px;border-radius:50%; display:grid; place-items:center; font-size:.82rem; font-weight:700; flex:none; background:var(--surface-2); color:var(--ink-soft)}
+  .mini.you{background:var(--accent-soft); color:var(--accent-ink)}
+  .m-main{min-width:0}
+  .m-name{font-weight:600}
+  .m-mail{color:var(--ink-soft); font-size:.82rem}
+  .role{display:inline-block; font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:999px; margin-left:6px; vertical-align:middle}
+  .role.owner{background:var(--accent-soft); color:var(--accent-ink)}
+  .role.admin{background:var(--accent-soft); color:var(--accent-ink)}
+  .role.member{background:var(--surface-2); color:var(--ink-soft)}
+  .m-bal{margin-left:auto; text-align:right; flex:none}
+  .m-bal .val{font-family:var(--sans); font-size:1.1rem; font-weight:700; letter-spacing:-.02em}
+  .m-bal .cap{font-size:.74rem; color:var(--ink-soft)}
+  .pos .val{color:var(--pos)} .neg .val{color:var(--neg)}
+
+  .invite{background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+  .invite-form{display:flex; gap:10px}
+  .invite-form input{flex:1; font:inherit; color:var(--ink); background:var(--surface-2); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:var(--radius-sm); padding:11px 14px}
+  .invite-form input:focus-visible{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent)}
+  .invite-form button{border:none; background:var(--accent); color:#fff; font:inherit; font-weight:600; padding:11px 16px; border-radius:var(--radius-sm); cursor:pointer; white-space:nowrap; box-shadow:0 10px 24px -8px var(--accent)}
+  .invite-form button:hover{filter:brightness(1.05)}
+  .pending-invite{display:flex; align-items:center; gap:12px; margin-top:14px; padding-top:14px; border-top:1px solid var(--hair)}
+  .pending-invite .env{width:34px;height:34px;border-radius:50%; background:var(--surface-2); display:grid; place-items:center; color:var(--ink-faint); flex:none}
+  .pending-invite .pm-mail{font-weight:600; font-size:.92rem}
+  .pending-invite .pm-meta{color:var(--ink-soft); font-size:.8rem}
+  .chip{display:inline-flex; align-items:center; gap:6px; font-size:.7rem; font-weight:600; padding:3px 10px; border-radius:999px; letter-spacing:.02em; margin-left:auto; flex:none}
+  .chip.invited{background:var(--warn-soft); color:var(--warn)}
+  .chip.invited svg{width:11px;height:11px}
+  .revoke{background:transparent; border:none; color:var(--ink-faint); font:inherit; font-size:.82rem; cursor:pointer; padding:6px 8px; border-radius:8px}
+  .revoke:hover{color:var(--neg); background:var(--surface-2)}
+
+  .recur{background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+  .recur .top{display:flex; align-items:center; gap:12px; margin-bottom:12px}
+  .recur .r-icon{width:40px;height:40px;border-radius:var(--radius-sm); background:var(--surface-2); display:grid; place-items:center; color:var(--accent-ink); flex:none}
+  .recur .r-title{font-weight:600}
+  .recur .r-meta{color:var(--ink-soft); font-size:.85rem}
+  .recur .r-amt{margin-left:auto; font-family:var(--sans); font-size:1.15rem; font-weight:700; letter-spacing:-.02em; flex:none}
+  .await-line{display:inline-flex; align-items:center; gap:8px; font-size:.78rem; font-weight:600; color:var(--warn); background:var(--warn-soft); border-radius:999px; padding:5px 12px; margin:0 0 14px}
+  .await-line svg{width:15px;height:15px}
+  .r-actions{display:flex; gap:10px}
+  .btn{flex:1; font:inherit; font-weight:600; font-size:.92rem; padding:11px; border-radius:var(--radius-sm); cursor:pointer; border:1px solid var(--glass-border)}
+  .btn.approve{background:var(--accent); color:#fff; border-color:transparent; box-shadow:0 10px 24px -8px var(--accent)}
+  .btn.approve:hover{filter:brightness(1.05)}
+  .btn.skip{background:var(--surface-2); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); color:var(--ink)}
+  .btn.skip:hover{background:var(--surface)}
+  .backlink{display:inline-block; margin-top:30px; color:var(--ink-faint); text-decoration:none; font-size:.85rem}
+  .backlink:hover{color:var(--ink)}
+  a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="close" href="dashboard.html">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Maple St. Apartment
+    </a>
+    <button class="toggle" id="themeBtn" aria-label="Toggle color theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <h1>Members</h1>
+  <p class="lede">4 people in Maple St. Apartment.</p>
+  <span class="owner-note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2l2.5 5 5.5.8-4 3.9.9 5.5L12 20l-4.9 2.2.9-5.5-4-3.9L9.5 7z" stroke-linejoin="round"/></svg>
+    You're the Owner — you can invite, approve recurring charges, and manage roles.
+  </span>
+
+  <h2>People</h2>
+  <div class="card">
+    <div class="m-row">
+      <span class="mini you">RA</span>
+      <div class="m-main"><div class="m-name">Raghad Abdelhaq <span class="role owner">Owner</span></div><div class="m-mail">raghad@maple.st · You</div></div>
+      <div class="m-bal pos"><div class="val">+$24.50</div><div class="cap">you're owed</div></div>
+    </div>
+    <div class="m-row">
+      <span class="mini">JL</span>
+      <div class="m-main"><div class="m-name">Jordan Lee <span class="role admin">Admin</span></div><div class="m-mail">jordan@maple.st</div></div>
+      <div class="m-bal pos"><div class="val">+$48.00</div><div class="cap">is owed</div></div>
+    </div>
+    <div class="m-row">
+      <span class="mini">SO</span>
+      <div class="m-main"><div class="m-name">Sam Okafor <span class="role member">Member</span></div><div class="m-mail">sam@maple.st</div></div>
+      <div class="m-bal neg"><div class="val">−$42.50</div><div class="cap">owes</div></div>
+    </div>
+    <div class="m-row">
+      <span class="mini">AR</span>
+      <div class="m-main"><div class="m-name">Alex Rivera <span class="role member">Member</span></div><div class="m-mail">alex@maple.st</div></div>
+      <div class="m-bal neg"><div class="val">−$30.00</div><div class="cap">owes</div></div>
+    </div>
+  </div>
+
+  <h2>Invite someone</h2>
+  <p class="sub">Owner &amp; admins can invite by email.</p>
+  <div class="invite">
+    <div class="invite-form">
+      <input type="email" placeholder="name@example.com" aria-label="Invite email">
+      <button>Send invite</button>
+    </div>
+    <div class="pending-invite">
+      <span class="env" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div><div class="pm-mail">casey@example.com</div><div class="pm-meta">Invited · hasn't joined yet</div></div>
+      <span class="chip invited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>Pending</span>
+    </div>
+  </div>
+
+  <h2>Recurring expenses</h2>
+  <p class="sub">Owner &amp; admins approve charges before they post.</p>
+  <div class="recur">
+    <div class="top">
+      <span class="r-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7M5 10v10h14V10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div><div class="r-title">Rent — August</div><div class="r-meta">$2,000.00 / month · split equally 4 ways</div></div>
+      <span class="r-amt">$2,000.00</span>
+    </div>
+    <p class="await-line">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Awaiting admin approval to post
+    </p>
+    <div class="r-actions">
+      <button class="btn approve">Approve</button>
+      <button class="btn skip">Skip this month</button>
+    </div>
+  </div>
+
+  <p><a class="backlink" href="index.html">← Back to gallery</a></p>
+</div>
+<script>
+  (function(){
+    var btn=document.getElementById('themeBtn');
+    function sysDark(){return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches}
+    function cur(){return document.documentElement.dataset.theme || (sysDark()?'dark':'light')}
+    btn.addEventListener('click',function(){document.documentElement.dataset.theme = cur()==='dark'?'light':'dark'});
+  })();
+</script>
+</body>
+</html>

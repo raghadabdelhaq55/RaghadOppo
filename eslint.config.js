@@ -10,13 +10,12 @@ const nodeGlobals = {
   __dirname: "readonly",
   __filename: "readonly",
   console: "readonly",
-};
-
-const browserGlobals = {
-  window: "readonly",
-  document: "readonly",
+  Buffer: "readonly",
+  setTimeout: "readonly",
+  clearTimeout: "readonly",
+  URL: "readonly",
+  URLSearchParams: "readonly",
   fetch: "readonly",
-  console: "readonly",
 };
 
 const rules = {
@@ -28,22 +27,16 @@ const rules = {
 };
 
 module.exports = [
-  { ignores: ["node_modules/**", "data/**"] },
+  // The React client is linted by its own Vite toolchain, not this Node config.
   {
-    files: ["server.js", "core/**/*.js", "test/**/*.js"],
+    ignores: ["node_modules/**", "data/**", "client/**", "phase-1-planning/**", "vite.config.js"],
+  },
+  {
+    files: ["server/**/*.js", "core/**/*.js", "test/**/*.js"],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: "commonjs",
       globals: nodeGlobals,
-    },
-    rules,
-  },
-  {
-    files: ["public/**/*.js"],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: "script",
-      globals: browserGlobals,
     },
     rules,
   },

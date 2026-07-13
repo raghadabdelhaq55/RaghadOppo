@@ -1,3 +1,10 @@
 node_modules/
 .DS_Store
 *.log
+
+# v2 runtime artifacts
+data/app.db
+data/app.db-shm
+data/app.db-wal
+client/dist/
+.env

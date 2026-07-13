@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add expense · Calm · Bill Splitter v2</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --ground:#E7EDEF;
+    --grad-1:rgba(25,158,151,.16); --grad-2:rgba(94,140,200,.14);
+    --surface:rgba(255,255,255,.60); --surface-2:rgba(255,255,255,.40); --surface-solid:#fff;
+    --glass-border:rgba(255,255,255,.70); --line:rgba(20,45,45,.10); --hair:rgba(20,45,45,.09);
+    --ink:#17282B; --ink-soft:#54686B; --ink-faint:#8AA0A2;
+    --accent:#199E97; --accent-ink:#127C76; --accent-soft:rgba(25,158,151,.14);
+    --pos:#1F9B83; --pos-soft:rgba(31,155,131,.14); --neg:#D76B60; --neg-soft:rgba(215,107,96,.14);
+    --radius:22px; --radius-sm:14px; --blur:saturate(160%) blur(20px);
+    --shadow:0 2px 6px rgba(20,50,50,.05), 0 22px 44px -16px rgba(20,50,50,.22);
+    --sans:-apple-system,"SF Pro Display",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){:root{
+    --ground:#0C1416; --grad-1:rgba(47,166,160,.20); --grad-2:rgba(80,110,190,.18);
+    --surface:rgba(28,40,43,.55); --surface-2:rgba(40,54,57,.42); --surface-solid:#1b2629;
+    --glass-border:rgba(255,255,255,.10); --line:rgba(255,255,255,.09); --hair:rgba(255,255,255,.08);
+    --ink:#E9F1F1; --ink-soft:#9FB3B4; --ink-faint:#6C8082;
+    --accent:#43CABF; --accent-ink:#6FE0D6; --accent-soft:rgba(67,202,191,.16);
+    --pos:#49C2A6; --pos-soft:rgba(73,194,166,.16); --neg:#E88B81; --neg-soft:rgba(232,139,129,.16);
+    --shadow:0 2px 6px rgba(0,0,0,.3), 0 24px 48px -16px rgba(0,0,0,.55);
+  }}
+  :root[data-theme="light"]{
+    --ground:#E7EDEF; --grad-1:rgba(25,158,151,.16); --grad-2:rgba(94,140,200,.14);
+    --surface:rgba(255,255,255,.60); --surface-2:rgba(255,255,255,.40); --surface-solid:#fff;
+    --glass-border:rgba(255,255,255,.70); --line:rgba(20,45,45,.10); --hair:rgba(20,45,45,.09);
+    --ink:#17282B; --ink-soft:#54686B; --ink-faint:#8AA0A2;
+    --accent:#199E97; --accent-ink:#127C76; --accent-soft:rgba(25,158,151,.14);
+    --pos:#1F9B83; --pos-soft:rgba(31,155,131,.14); --neg:#D76B60; --neg-soft:rgba(215,107,96,.14);
+    --shadow:0 2px 6px rgba(20,50,50,.05), 0 22px 44px -16px rgba(20,50,50,.22);
+  }
+  :root[data-theme="dark"]{
+    --ground:#0C1416; --grad-1:rgba(47,166,160,.20); --grad-2:rgba(80,110,190,.18);
+    --surface:rgba(28,40,43,.55); --surface-2:rgba(40,54,57,.42); --surface-solid:#1b2629;
+    --glass-border:rgba(255,255,255,.10); --line:rgba(255,255,255,.09); --hair:rgba(255,255,255,.08);
+    --ink:#E9F1F1; --ink-soft:#9FB3B4; --ink-faint:#6C8082;
+    --accent:#43CABF; --accent-ink:#6FE0D6; --accent-soft:rgba(67,202,191,.16);
+    --pos:#49C2A6; --pos-soft:rgba(73,194,166,.16); --neg:#E88B81; --neg-soft:rgba(232,139,129,.16);
+    --shadow:0 2px 6px rgba(0,0,0,.3), 0 24px 48px -16px rgba(0,0,0,.55);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    :root{ --surface:rgba(255,255,255,.94); --surface-2:rgba(255,255,255,.88); }
+    :root[data-theme="dark"]{ --surface:rgba(28,40,43,.95); --surface-2:rgba(40,54,57,.92); }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1100px 700px at 10% -10%, var(--grad-1), transparent 60%),
+      radial-gradient(1000px 680px at 95% 4%, var(--grad-2), transparent 60%),
+      var(--ground);
+    background-attachment: fixed;
+    color:var(--ink); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important; animation:none!important}}
+  .wrap{max-width:560px; margin:0 auto; padding:16px 22px 120px}
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:6px 0 8px}
+  .close{display:inline-flex; align-items:center; gap:7px; color:var(--ink-soft); text-decoration:none; font-size:.9rem; padding:6px 8px; border-radius:10px}
+  .close:hover{background:var(--surface-2); color:var(--ink)}
+  .toggle{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--glass-border); background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); color:var(--ink-soft); border-radius:999px; padding:6px 11px; font:inherit; font-size:.8rem; cursor:pointer; box-shadow:var(--shadow)}
+  .toggle svg{width:15px;height:15px}
+  .toggle:hover{color:var(--ink)}
+
+  /* step indicator */
+  .steps{display:flex; align-items:center; gap:8px; margin:18px 0 30px}
+  .step{display:flex; align-items:center; gap:8px; flex:1}
+  .dot{width:26px;height:26px;border-radius:50%; display:grid; place-items:center; font-size:.78rem; font-weight:700; flex:none; background:var(--surface-2); color:var(--ink-faint); border:1px solid var(--hair)}
+  .step .lbl{font-size:.78rem; color:var(--ink-faint); font-weight:600; white-space:nowrap}
+  .bar{height:3px; background:var(--hair); flex:1; border-radius:999px}
+  .step.done .dot{background:var(--accent-soft); color:var(--accent-ink); border-color:transparent}
+  .step.done + .bar{background:var(--accent)}
+  .step.active .dot{background:var(--accent); color:#fff; border-color:transparent; box-shadow:0 8px 18px -8px var(--accent)}
+  .step.active .lbl{color:var(--ink)}
+  .step.done .lbl{color:var(--ink-soft)}
+  @media (max-width:520px){.step .lbl{display:none} .step.active .lbl{display:inline}}
+
+  h1{font-family:var(--sans); font-weight:700; font-size:1.9rem; line-height:1.15; margin:0 0 4px; letter-spacing:-.02em}
+  .hint{color:var(--ink-soft); margin:0 0 22px; font-size:.98rem}
+
+  .panel{display:none}
+  .panel.show{display:block}
+
+  label{display:block; font-size:.82rem; font-weight:600; color:var(--ink-soft); margin:0 0 7px}
+  .field{margin-bottom:20px}
+  input,select{width:100%; font:inherit; color:var(--ink); background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:var(--radius-sm); padding:12px 14px; font-variant-numeric:tabular-nums; box-shadow:var(--shadow)}
+  input:focus-visible,select:focus-visible{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent)}
+  .amount-field{display:flex; gap:10px}
+  .amount-field .big{flex:1; font-family:var(--sans); font-weight:700; letter-spacing:-.02em; font-size:1.8rem; padding:14px 16px; text-align:left}
+  .amount-field select{width:96px; flex:none}
+  .two{display:flex; gap:12px}
+  .two > *{flex:1}
+
+  /* members */
+  .members{display:grid; gap:8px}
+  .m-row{display:flex; align-items:center; gap:12px; padding:11px 14px; border:1px solid var(--glass-border); border-radius:var(--radius-sm); background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); box-shadow:var(--shadow); cursor:pointer}
+  .m-row .mini{width:30px;height:30px;border-radius:50%; display:grid; place-items:center; font-size:.74rem; font-weight:700; background:var(--surface-2); color:var(--ink-soft); flex:none}
+  .m-row .nm{font-weight:600}
+  .m-row .ck{margin-left:auto; width:22px;height:22px;border-radius:6px; border:1.5px solid var(--line); display:grid; place-items:center; color:transparent}
+  .m-row.on{border-color:var(--accent); background:var(--accent-soft)}
+  .m-row.on .ck{background:var(--accent); border-color:var(--accent); color:#fff}
+
+  /* split type */
+  .segmented{display:flex; gap:4px; background:var(--surface-2); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:var(--radius-sm); padding:4px; margin-bottom:20px; box-shadow:var(--shadow)}
+  .segmented button{flex:1; border:1px solid transparent; background:transparent; font:inherit; font-weight:600; font-size:.9rem; color:var(--ink-soft); padding:10px; border-radius:10px; cursor:pointer}
+  .segmented button[aria-pressed="true"]{background:var(--accent-soft); color:var(--accent-ink); border-color:var(--accent)}
+
+  .split-list{border:1px solid var(--glass-border); border-radius:var(--radius); overflow:hidden; background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); box-shadow:var(--shadow)}
+  .split-row{display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--hair)}
+  .split-row:last-child{border-bottom:none}
+  .split-row .mini{width:28px;height:28px;border-radius:50%; display:grid; place-items:center; font-size:.72rem; font-weight:700; background:var(--surface-2); color:var(--ink-soft); flex:none}
+  .split-row .nm{font-weight:600; font-size:.95rem}
+  .split-input{margin-left:auto; display:flex; align-items:center; gap:4px}
+  .split-input .cur{color:var(--ink-faint)}
+  .split-input input{width:88px; text-align:right; padding:8px 10px; font-weight:600; border-radius:10px; box-shadow:none}
+  .valid{display:flex; align-items:center; gap:8px; margin:14px 2px 0; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); box-shadow:var(--shadow); font-size:.9rem; font-weight:600}
+  .valid.ok{color:var(--pos)} .valid.bad{color:var(--neg)}
+  .valid svg{width:16px;height:16px}
+
+  /* review */
+  .review{background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:var(--radius); box-shadow:var(--shadow); padding:6px 20px}
+  .review .r-total{text-align:center; padding:22px 0 18px; border-bottom:1px solid var(--hair)}
+  .review .r-total .amt{font-family:var(--sans); font-weight:700; letter-spacing:-.02em; font-size:2.4rem; margin:0}
+  .review .r-total .desc{color:var(--ink-soft); margin:2px 0 0}
+  .rrow{display:flex; align-items:center; padding:13px 0; border-bottom:1px solid var(--hair)}
+  .rrow:last-child{border-bottom:none}
+  .rrow .k{color:var(--ink-soft); font-size:.9rem}
+  .rrow .v{margin-left:auto; font-weight:600; text-align:right}
+  .rrow .v .sub{display:block; font-weight:400; color:var(--ink-soft); font-size:.82rem}
+
+  .nav{position:fixed; left:0; right:0; bottom:0; background:linear-gradient(to top, var(--ground) 74%, transparent); padding:16px 22px 22px}
+  .nav-inner{max-width:560px; margin:0 auto; display:flex; gap:12px}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font:inherit; font-weight:600; font-size:1rem; padding:14px; border-radius:var(--radius-sm); cursor:pointer; text-decoration:none; border:1px solid var(--glass-border)}
+  .btn.primary{flex:1; background:var(--accent); color:#fff; border:none; box-shadow:0 10px 24px -8px var(--accent)}
+  .btn.primary:hover{filter:brightness(1.05)}
+  .btn.ghost{background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); color:var(--ink); min-width:96px; box-shadow:var(--shadow)}
+  .btn.ghost:hover{background:var(--surface-2)}
+  a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="close" href="dashboard.html">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Maple St. Apartment
+    </a>
+    <button class="toggle" id="themeBtn" aria-label="Toggle color theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="steps" aria-label="Progress">
+    <div class="step done" data-s="1"><span class="dot">✓</span><span class="lbl">Amount</span></div>
+    <span class="bar"></span>
+    <div class="step done" data-s="2"><span class="dot">✓</span><span class="lbl">Who paid</span></div>
+    <span class="bar"></span>
+    <div class="step active" data-s="3"><span class="dot">3</span><span class="lbl">Split</span></div>
+    <span class="bar"></span>
+    <div class="step" data-s="4"><span class="dot">4</span><span class="lbl">Review</span></div>
+  </div>
+
+  <!-- STEP 1: Amount -->
+  <section class="panel" data-panel="1" aria-label="Amount">
+    <h1>How much was it?</h1>
+    <p class="hint">Enter the total and pick the currency. One thing at a time.</p>
+    <div class="field">
+      <label for="amt">Amount</label>
+      <div class="amount-field">
+        <input id="amt" class="big" type="text" inputmode="decimal" value="64.00">
+        <select aria-label="Currency"><option>USD $</option><option>EUR €</option></select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="desc">What was it for?</label>
+      <input id="desc" type="text" value="Dinner @ Luigi's">
+    </div>
+    <div class="field">
+      <label for="date">Date</label>
+      <input id="date" type="date" value="2026-07-11">
+    </div>
+  </section>
+
+  <!-- STEP 2: Who paid -->
+  <section class="panel" data-panel="2" aria-label="Who paid">
+    <h1>Who paid?</h1>
+    <p class="hint">Choose the one person who covered the bill.</p>
+    <div class="field">
+      <label for="payer">Paid by</label>
+      <select id="payer"><option selected>Raghad (You)</option><option>Sam Okafor</option><option>Jordan Lee</option><option>Alex Rivera</option></select>
+    </div>
+    <div class="field">
+      <label>Split between</label>
+      <div class="members">
+        <div class="m-row on"><span class="mini" style="background:var(--accent-soft);color:var(--accent-ink)">RA</span><span class="nm">Raghad (You)</span><span class="ck">✓</span></div>
+        <div class="m-row on"><span class="mini">SO</span><span class="nm">Sam Okafor</span><span class="ck">✓</span></div>
+        <div class="m-row"><span class="mini">JL</span><span class="nm">Jordan Lee</span><span class="ck">✓</span></div>
+        <div class="m-row on"><span class="mini">AR</span><span class="nm">Alex Rivera</span><span class="ck">✓</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3: Split (default shown, Exact mode) -->
+  <section class="panel show" data-panel="3" aria-label="Split">
+    <h1>How should it split?</h1>
+    <p class="hint">Dinner @ Luigi's · $64.00 · paid by You. Exact amounts for this one.</p>
+    <div class="segmented" role="group" aria-label="Split type">
+      <button aria-pressed="false" onclick="setSplit(this,'Equal')">Equal</button>
+      <button aria-pressed="true" onclick="setSplit(this,'Exact')">Exact amounts</button>
+      <button aria-pressed="false" onclick="setSplit(this,'Percent')">Percentages</button>
+    </div>
+
+    <div class="split-list">
+      <div class="split-row"><span class="mini" style="background:var(--accent-soft);color:var(--accent-ink)">RA</span><span class="nm">Raghad (You)</span>
+        <span class="split-input"><span class="cur">$</span><input type="text" value="20.00" aria-label="Raghad amount"></span></div>
+      <div class="split-row"><span class="mini">SO</span><span class="nm">Sam Okafor</span>
+        <span class="split-input"><span class="cur">$</span><input type="text" value="24.00" aria-label="Sam amount"></span></div>
+      <div class="split-row"><span class="mini">AR</span><span class="nm">Alex Rivera</span>
+        <span class="split-input"><span class="cur">$</span><input type="text" value="20.00" aria-label="Alex amount"></span></div>
+    </div>
+    <p class="valid ok" id="validLine">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Shares sum to $64.00 ✓
+    </p>
+  </section>
+
+  <!-- STEP 4: Review -->
+  <section class="panel" data-panel="4" aria-label="Review">
+    <h1>Look right?</h1>
+    <p class="hint">A quick check before you post it.</p>
+    <div class="review">
+      <div class="r-total"><p class="amt">$64.00</p><p class="desc">Dinner @ Luigi's</p></div>
+      <div class="rrow"><span class="k">Date</span><span class="v">Sat, Jul 11, 2026</span></div>
+      <div class="rrow"><span class="k">Paid by</span><span class="v">Raghad (You)</span></div>
+      <div class="rrow"><span class="k">Split type</span><span class="v">Exact amounts</span></div>
+      <div class="rrow"><span class="k">Breakdown</span><span class="v">You $20.00<span class="sub">Sam $24.00 · Alex $20.00</span></span></div>
+      <div class="rrow"><span class="k">Currency</span><span class="v">USD ($)</span></div>
+    </div>
+  </section>
+
+  <p style="margin-top:16px"><a class="close" href="index.html" style="padding-left:0">← Back to gallery</a></p>
+</div>
+
+<div class="nav">
+  <div class="nav-inner">
+    <button class="btn ghost" onclick="go(-1)">Back</button>
+    <button class="btn primary" id="nextBtn" onclick="go(1)">Continue to Review</button>
+  </div>
+</div>
+
+<script>
+  var step=3;
+  function render(){
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('show', +p.dataset.panel===step)});
+    document.querySelectorAll('.step').forEach(function(s){
+      var n=+s.dataset.s; s.classList.toggle('active', n===step); s.classList.toggle('done', n<step);
+      var dot=s.querySelector('.dot'); dot.textContent = n<step ? '✓' : n;
+    });
+    var nb=document.getElementById('nextBtn');
+    if(step===4){ nb.textContent='Post expense'; }
+    else if(step===3){ nb.textContent='Continue to Review'; }
+    else { nb.textContent='Continue'; }
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  function go(d){ step=Math.max(1,Math.min(4,step+d)); render(); }
+  function setSplit(btn,type){
+    document.querySelectorAll('.segmented button').forEach(function(b){b.setAttribute('aria-pressed', b===btn)});
+    var line=document.getElementById('validLine');
+    if(type==='Percent'){
+      line.className='valid bad';
+      line.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 8v5M12 16v.5" stroke-linecap="round"/></svg> Percentages must equal 100%';
+    } else if(type==='Equal'){
+      line.className='valid ok';
+      line.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Split equally · $21.33 each ✓';
+    } else {
+      line.className='valid ok';
+      line.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Shares sum to $64.00 ✓';
+    }
+  }
+  (function(){
+    var btn=document.getElementById('themeBtn');
+    function sysDark(){return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches}
+    function cur(){return document.documentElement.dataset.theme || (sysDark()?'dark':'light')}
+    btn.addEventListener('click',function(){document.documentElement.dataset.theme = cur()==='dark'?'light':'dark'});
+  })();
+  render();
+</script>
+</body>
+</html>
