@@ -12,6 +12,7 @@ export default function SettleUp() {
   const cur = group?.baseCurrency || "USD";
   const [plan, setPlan] = useState([]);
   const [settlements, setSettlements] = useState([]);
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState(null);
 
@@ -20,6 +21,7 @@ export default function SettleUp() {
     const d = await api.get(`/api/groups/${currentId}/settle`);
     setPlan(d.plan);
     setSettlements(d.settlements);
+    setLoaded(true);
   }, [currentId]);
 
   useEffect(() => {
@@ -55,6 +57,11 @@ export default function SettleUp() {
     act(`s-${s.id}`, () => api.post(`/api/groups/${currentId}/settlements/${s.id}/dispute`));
 
   const pending = settlements.filter((s) => s.status === "pending");
+  // Debts that already have a payment awaiting confirmation — don't offer to
+  // mark them paid again (the server also rejects duplicates).
+  const pendingKeys = new Set(pending.map((s) => `${s.fromUser}>${s.toUser}`));
+
+  if (!loaded) return <div className="spinner-wrap">Loading…</div>;
 
   return (
     <div className="wrap narrow">
@@ -75,11 +82,20 @@ export default function SettleUp() {
           {plan.map((hop, i) => {
             const toYou = hop.to === user.id;
             const fromYou = hop.from === user.id;
+            const marked = pendingKeys.has(`${hop.from}>${hop.to}`);
             return (
               <div
                 className="card"
                 key={i}
-                style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", marginBottom: 12, background: toYou ? "var(--pos-soft)" : "var(--surface)" }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  padding: "16px 18px",
+                  marginBottom: 12,
+                  background: toYou ? "var(--pos-soft)" : "var(--surface)",
+                  opacity: marked ? 0.6 : 1,
+                }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <span className={`mini ${fromYou ? "you" : "neg"}`}>{initials(hop.fromName)}</span>
@@ -94,14 +110,23 @@ export default function SettleUp() {
                     {money(hop.amountCents, cur)}
                   </div>
                 </div>
-                <button
-                  className="btn primary sm"
-                  style={{ marginLeft: "auto", flex: "none" }}
-                  disabled={busyId === `plan-${i}`}
-                  onClick={() => markPaid(hop, i)}
-                >
-                  {busyId === `plan-${i}` ? "…" : "Mark as paid"}
-                </button>
+                {marked ? (
+                  <span className="chip await" style={{ marginLeft: "auto", flex: "none", gap: 5 }}>
+                    <span style={{ width: 12, height: 12, display: "inline-flex" }}>
+                      <Clock />
+                    </span>
+                    Awaiting
+                  </span>
+                ) : (
+                  <button
+                    className="btn primary sm"
+                    style={{ marginLeft: "auto", flex: "none" }}
+                    disabled={busyId === `plan-${i}`}
+                    onClick={() => markPaid(hop, i)}
+                  >
+                    {busyId === `plan-${i}` ? "…" : "Mark as paid"}
+                  </button>
+                )}
               </div>
             );
           })}

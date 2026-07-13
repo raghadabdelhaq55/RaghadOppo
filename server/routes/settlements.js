@@ -32,6 +32,11 @@ function register(router) {
       return error(400, "payer and payee must be group members");
     }
     if (!Number.isFinite(amountCents) || amountCents <= 0) return error(400, "amount must be positive");
+    // Don't let the same debt be marked paid twice while one is still pending.
+    const dup = repo
+      .listSettlements(groupId)
+      .some((s) => s.status === "pending" && s.from_user === fromUser && s.to_user === toUser);
+    if (dup) return error(409, "that payment is already awaiting confirmation");
     const s = repo.createSettlement(groupId, fromUser, toUser, amountCents, user.id);
     return json(201, { settlement: settlementView(s, nameResolver(repo, groupId)) });
   });

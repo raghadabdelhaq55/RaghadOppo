@@ -19,6 +19,7 @@ export default function Members() {
   const [members, setMembers] = useState([]);
   const [invites, setInvites] = useState([]);
   const [recurring, setRecurring] = useState([]);
+  const [loaded, setLoaded] = useState(false);
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
@@ -33,6 +34,7 @@ export default function Members() {
     setMembers(m.members);
     setInvites(m.invites);
     setRecurring(r.recurring);
+    setLoaded(true);
   }, [currentId]);
 
   useEffect(() => {
@@ -63,6 +65,8 @@ export default function Members() {
       `Invite sent to ${addr} (check data/outbox.log in dev).`
     ).then(() => setEmail(""));
   };
+
+  if (!loaded) return <div className="spinner-wrap">Loading…</div>;
 
   return (
     <div className="wrap narrow">
