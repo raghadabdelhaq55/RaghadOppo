@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGroups } from "../context/GroupContext";
 import { Chevron, Check } from "./icons";
-import { initials, signedMoney } from "../lib/format";
+import { initials, money } from "../lib/format";
 
 // The topbar group name button + dropdown switcher (dashboard mockup).
 export default function GroupSwitcher() {
@@ -50,7 +50,7 @@ export default function GroupSwitcher() {
                 <br />
                 <span className="g-meta">
                   {g.memberCount} members
-                  {g.netCents ? ` · you're ${g.netCents > 0 ? "owed" : "down"} ${signedMoney(Math.abs(g.netCents), g.baseCurrency)}` : ""}
+                  {g.netCents ? ` · you're ${g.netCents > 0 ? "owed" : "down"} ${money(Math.abs(g.netCents), g.baseCurrency)}` : ""}
                 </span>
               </span>
               {g.id === currentId && <Check className="check" width="18" height="18" />}
