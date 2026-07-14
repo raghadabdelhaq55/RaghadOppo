@@ -1,13 +1,36 @@
 {
   "name": "bill-splitter",
-  "version": "1.0.0",
-  "description": "Split shared expenses and see who owes whom. Zero dependencies.",
+  "version": "2.0.0",
+  "description": "Bill Splitter v2 — accounts, groups, split types, settle-up, multi-currency. Calm design.",
   "type": "commonjs",
   "scripts": {
-    "start": "node server.js",
-    "test": "node --test"
+    "start": "node server/index.js",
+    "seed": "node server/seed.js",
+    "dev": "concurrently -k -n api,web -c blue,magenta \"node server/index.js\" \"vite\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"{server,core,test}/**/*.js\"",
+    "format:check": "prettier --check \"{server,core,test}/**/*.js\""
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.3",
+    "concurrently": "^10.0.3",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.5",
+    "vite": "^8.1.4"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.11.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.18.1"
   }
 }

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bill Splitter v2 — Chosen Design: Calm</title>
+    <style>
+      :root {
+        --bg: #f4f5f3;
+        --panel: #ffffff;
+        --ink: #1f2320;
+        --ink-soft: #5c635d;
+        --line: #e2e5e0;
+        --accent: #1f6b57;
+        --accent-soft: #e6f1ec;
+        --shadow: 0 1px 2px rgba(20, 30, 25, 0.06), 0 8px 24px rgba(20, 30, 25, 0.05);
+        --radius: 14px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #14171a; --panel: #1c2024; --ink: #eef1ee; --ink-soft: #9aa39c;
+          --line: #2b3136; --accent: #4fd1a8; --accent-soft: #16302a;
+          --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+      }
+      :root[data-theme="light"] {
+        --bg: #f4f5f3; --panel: #ffffff; --ink: #1f2320; --ink-soft: #5c635d;
+        --line: #e2e5e0; --accent: #1f6b57; --accent-soft: #e6f1ec;
+        --shadow: 0 1px 2px rgba(20, 30, 25, 0.06), 0 8px 24px rgba(20, 30, 25, 0.05);
+      }
+      :root[data-theme="dark"] {
+        --bg: #14171a; --panel: #1c2024; --ink: #eef1ee; --ink-soft: #9aa39c;
+        --line: #2b3136; --accent: #4fd1a8; --accent-soft: #16302a;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; background: var(--bg); color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.55; -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+      header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+      .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 12px; font-weight: 600; color: var(--accent); margin: 0 0 8px; }
+      h1 { font-size: clamp(28px, 4vw, 38px); margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+      .lede { color: var(--ink-soft); max-width: 62ch; margin: 14px 0 0; font-size: 17px; }
+      .toggle { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 8px 14px; font-size: 13px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+      .toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .meta { margin: 28px 0 24px; padding: 16px 18px; background: var(--accent-soft); border: 1px solid var(--line); border-radius: var(--radius); font-size: 14.5px; }
+      .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 14px; }
+      .card h2 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
+      .card p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+      .best { font-size: 13.5px; color: var(--ink); }
+      .best b { color: var(--accent); }
+      .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+      .links a { text-decoration: none; font-size: 13.5px; color: var(--ink); border: 1px solid var(--line); padding: 8px 13px; border-radius: 8px; background: var(--bg); transition: border-color .15s, color .15s; }
+      .links a:hover { border-color: var(--accent); color: var(--accent); }
+      .links a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .links a.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+      .foot { margin-top: 36px; color: var(--ink-soft); font-size: 13.5px; border-top: 1px solid var(--line); padding-top: 20px; }
+      .foot a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div>
+          <p class="eyebrow">Phase 1 · Chosen direction</p>
+          <h1>Bill Splitter v2 — Calm</h1>
+        </div>
+        <button class="toggle" id="themeToggle" type="button">◐ Theme</button>
+      </header>
+      <p class="lede">
+        The <strong>Calm</strong> direction was selected from the Phase 1 exploration; the other explored directions
+        (Ledger, Stream, Dashboard) have been removed. Below are the five screens, all built from
+        <code>SPEC.md</code> with the shared “Maple St. Apartment” household data.
+      </p>
+
+      <div class="meta">
+        <strong>Shared scenario:</strong> Raghad (you, owner), Sam, Jordan, and Alex — with equal / exact / EUR
+        expenses, a net-zero balance set, and a 3-payment minimal settle-up plan.
+      </div>
+
+      <div class="card">
+        <h2>D · Calm</h2>
+        <p>Minimalist and focused: a single centered column, quiet serif type, a muted sage accent, and a
+          one-thing-at-a-time wizard for adding expenses. Money is stressful; this direction is reassuring.</p>
+        <p class="best"><b>Optimizes for:</b> clarity &amp; low anxiety. &nbsp;<b>Trades away:</b> power-user density, quick scanning of many items.</p>
+        <div class="links">
+          <a class="primary" href="d-calm/index.html">Direction overview →</a>
+          <a href="d-calm/dashboard.html">Dashboard</a>
+          <a href="d-calm/add-expense.html">Add expense</a>
+          <a href="d-calm/settle-up.html">Settle up</a>
+          <a href="d-calm/members.html">Members</a>
+          <a href="d-calm/auth.html">Auth</a>
+        </div>
+      </div>
+
+      <p class="foot">
+        Static, non-wired mockups. See <a href="../DESIGN-DIRECTIONS.md">DESIGN-DIRECTIONS.md</a> for the decision
+        record and how Calm bears on the spec's open questions.
+      </p>
+    </div>
+
+    <script>
+      (function () {
+        var btn = document.getElementById("themeToggle");
+        btn.addEventListener("click", function () {
+          var cur = document.documentElement.dataset.theme;
+          if (!cur) { cur = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }
+          document.documentElement.dataset.theme = cur === "dark" ? "light" : "dark";
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in · Calm · Bill Splitter v2</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --ground:#E7EDEF;
+    --grad-1:rgba(25,158,151,.16); --grad-2:rgba(94,140,200,.14);
+    --surface:rgba(255,255,255,.60); --surface-2:rgba(255,255,255,.40); --surface-solid:#fff;
+    --glass-border:rgba(255,255,255,.70); --line:rgba(20,45,45,.10); --hair:rgba(20,45,45,.09);
+    --ink:#17282B; --ink-soft:#54686B; --ink-faint:#8AA0A2;
+    --accent:#199E97; --accent-ink:#127C76; --accent-soft:rgba(25,158,151,.14);
+    --pos:#1F9B83; --pos-soft:rgba(31,155,131,.14); --neg:#D76B60; --neg-soft:rgba(215,107,96,.14);
+    --radius:22px; --radius-sm:14px; --blur:saturate(160%) blur(20px);
+    --shadow:0 2px 6px rgba(20,50,50,.05), 0 22px 44px -16px rgba(20,50,50,.22);
+    --sans:-apple-system,"SF Pro Display",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){:root{
+    --ground:#0C1416; --grad-1:rgba(47,166,160,.20); --grad-2:rgba(80,110,190,.18);
+    --surface:rgba(28,40,43,.55); --surface-2:rgba(40,54,57,.42); --surface-solid:#1b2629;
+    --glass-border:rgba(255,255,255,.10); --line:rgba(255,255,255,.09); --hair:rgba(255,255,255,.08);
+    --ink:#E9F1F1; --ink-soft:#9FB3B4; --ink-faint:#6C8082;
+    --accent:#43CABF; --accent-ink:#6FE0D6; --accent-soft:rgba(67,202,191,.16);
+    --pos:#49C2A6; --pos-soft:rgba(73,194,166,.16); --neg:#E88B81; --neg-soft:rgba(232,139,129,.16);
+    --shadow:0 2px 6px rgba(0,0,0,.3), 0 24px 48px -16px rgba(0,0,0,.55);
+  }}
+  :root[data-theme="light"]{
+    --ground:#E7EDEF; --grad-1:rgba(25,158,151,.16); --grad-2:rgba(94,140,200,.14);
+    --surface:rgba(255,255,255,.60); --surface-2:rgba(255,255,255,.40); --surface-solid:#fff;
+    --glass-border:rgba(255,255,255,.70); --line:rgba(20,45,45,.10); --hair:rgba(20,45,45,.09);
+    --ink:#17282B; --ink-soft:#54686B; --ink-faint:#8AA0A2;
+    --accent:#199E97; --accent-ink:#127C76; --accent-soft:rgba(25,158,151,.14);
+    --pos:#1F9B83; --pos-soft:rgba(31,155,131,.14); --neg:#D76B60; --neg-soft:rgba(215,107,96,.14);
+    --shadow:0 2px 6px rgba(20,50,50,.05), 0 22px 44px -16px rgba(20,50,50,.22);
+  }
+  :root[data-theme="dark"]{
+    --ground:#0C1416; --grad-1:rgba(47,166,160,.20); --grad-2:rgba(80,110,190,.18);
+    --surface:rgba(28,40,43,.55); --surface-2:rgba(40,54,57,.42); --surface-solid:#1b2629;
+    --glass-border:rgba(255,255,255,.10); --line:rgba(255,255,255,.09); --hair:rgba(255,255,255,.08);
+    --ink:#E9F1F1; --ink-soft:#9FB3B4; --ink-faint:#6C8082;
+    --accent:#43CABF; --accent-ink:#6FE0D6; --accent-soft:rgba(67,202,191,.16);
+    --pos:#49C2A6; --pos-soft:rgba(73,194,166,.16); --neg:#E88B81; --neg-soft:rgba(232,139,129,.16);
+    --shadow:0 2px 6px rgba(0,0,0,.3), 0 24px 48px -16px rgba(0,0,0,.55);
+  }
+  body{
+    background:
+      radial-gradient(1100px 700px at 10% -10%, var(--grad-1), transparent 60%),
+      radial-gradient(1000px 680px at 95% 4%, var(--grad-2), transparent 60%),
+      var(--ground);
+    background-attachment: fixed;
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    :root{ --surface:rgba(255,255,255,.94); --surface-2:rgba(255,255,255,.88); }
+    :root[data-theme="dark"]{ --surface:rgba(28,40,43,.95); --surface-2:rgba(40,54,57,.92); }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    color:var(--ink); font-family:var(--sans);
+    line-height:1.6; -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums;
+    min-height:100vh; display:flex; flex-direction:column;
+  }
+  .topbar{max-width:560px; width:100%; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:20px 22px}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.02em}
+  .mark{width:28px;height:28px;flex:none}
+  .toggle{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--glass-border); background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); color:var(--ink-soft); border-radius:999px; padding:7px 13px; font:inherit; font-size:.82rem; cursor:pointer}
+  .toggle:hover{color:var(--ink)}
+  .toggle svg{width:15px;height:15px}
+  main{flex:1; display:flex; align-items:center; justify-content:center; padding:16px 22px 64px}
+  .col{max-width:400px; width:100%}
+  .hero{text-align:center; margin-bottom:26px}
+  .badge{display:inline-block; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:4px 10px; border-radius:999px; font-weight:700; margin-bottom:16px}
+  h1{font-family:var(--sans); font-weight:700; font-size:2.05rem; line-height:1.15; margin:0 0 8px; letter-spacing:-.02em}
+  .sub{color:var(--ink-soft); margin:0; font-size:1rem}
+  .card{background:var(--surface); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:var(--radius); box-shadow:var(--shadow); padding:26px 24px}
+  .tabs{display:flex; gap:4px; background:var(--surface-2); border:1px solid var(--glass-border); border-radius:999px; padding:4px; margin-bottom:22px}
+  .tabs button{flex:1; border:none; background:transparent; color:var(--ink-soft); font:inherit; font-weight:700; font-size:.92rem; padding:9px; border-radius:999px; cursor:pointer; transition:background .18s ease, color .18s ease}
+  .tabs button[aria-selected="true"]{background:var(--accent-soft); color:var(--accent-ink); box-shadow:0 1px 3px rgba(20,50,50,.08)}
+  label{display:block; font-size:.82rem; font-weight:700; color:var(--ink-soft); margin:0 0 6px}
+  .field{margin-bottom:16px}
+  input{width:100%; font:inherit; color:var(--ink); background:var(--surface-2); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); border:1px solid var(--glass-border); border-radius:var(--radius-sm); padding:12px 14px}
+  input::placeholder{color:var(--ink-faint)}
+  input:focus-visible{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent)}
+  .row-between{display:flex; align-items:center; justify-content:space-between}
+  .link{color:var(--accent-ink); text-decoration:none; font-size:.84rem; font-weight:700}
+  .link:hover{text-decoration:underline}
+  .btn{width:100%; border:none; background:var(--accent); color:#fff; font:inherit; font-weight:700; font-size:1rem; padding:13px; border-radius:var(--radius-sm); cursor:pointer; margin-top:6px; box-shadow:0 10px 24px -8px var(--accent); transition:filter .18s ease}
+  .btn:hover{filter:brightness(1.05)}
+  .hint{color:var(--ink-faint); font-size:.8rem; text-align:center; margin:18px 0 0}
+  .signup-only{display:none}
+  body[data-mode="signup"] .signup-only{display:block}
+  body[data-mode="signup"] .login-only{display:none}
+  .v2note{margin-top:22px; text-align:center; color:var(--ink-soft); font-size:.85rem}
+  .v2note b{color:var(--ink); font-weight:700}
+  .back{display:inline-block; margin:0 auto; color:var(--ink-faint); text-decoration:none; font-size:.85rem}
+  .back:hover{color:var(--ink)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  @media (prefers-reduced-motion: reduce){*{transition:none !important; animation:none !important}}
+</style>
+</head>
+<body data-mode="login">
+  <div class="topbar">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="9" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.3"/><path d="M9 20c3-1 5-9 7-9s4 8 7 9" stroke="var(--accent-ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Splitwise
+    </div>
+    <button class="toggle" id="themeBtn" aria-label="Toggle color theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke-linecap="round"/></svg>
+      <span id="themeLabel">Theme</span>
+    </button>
+  </div>
+
+  <main>
+    <div class="col">
+      <div class="hero">
+        <span class="badge">Bill Splitter v2</span>
+        <h1 class="login-only">Welcome back</h1>
+        <h1 class="signup-only">Create your account</h1>
+        <p class="sub login-only">Sign in to Maple St. Apartment and your other groups.</p>
+        <p class="sub signup-only">A few calm steps and you're splitting bills in seconds.</p>
+      </div>
+
+      <form class="card" onsubmit="return false">
+        <div class="tabs" role="tablist" aria-label="Sign in or sign up">
+          <button role="tab" id="tab-login" aria-selected="true" onclick="setMode('login')">Sign in</button>
+          <button role="tab" id="tab-signup" aria-selected="false" onclick="setMode('signup')">Sign up</button>
+        </div>
+
+        <div class="field signup-only">
+          <label for="name">Your name</label>
+          <input id="name" type="text" placeholder="Raghad Abdelhaq" autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="raghad@maple.st" autocomplete="email" value="raghad@maple.st">
+        </div>
+
+        <div class="field">
+          <div class="row-between">
+            <label for="pw">Password</label>
+            <a class="link login-only" href="#">Forgot?</a>
+          </div>
+          <input id="pw" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <div class="field signup-only">
+          <label for="pw2">Confirm password</label>
+          <input id="pw2" type="password" placeholder="••••••••" autocomplete="new-password">
+        </div>
+
+        <a class="btn login-only" href="dashboard.html" style="display:block;text-align:center;text-decoration:none">Sign in</a>
+        <a class="btn signup-only" href="dashboard.html" style="display:block;text-align:center;text-decoration:none">Create account</a>
+
+        <p class="hint login-only">New here? <a class="link" href="#" onclick="setMode('signup');return false">Create an account</a></p>
+        <p class="hint signup-only">Already have one? <a class="link" href="#" onclick="setMode('login');return false">Sign in</a></p>
+      </form>
+
+      <p class="v2note"><b>New in v2:</b> personal accounts. Your groups now follow you across devices.</p>
+      <p style="text-align:center;margin-top:18px"><a class="back" href="index.html">← Back to gallery</a></p>
+    </div>
+  </main>
+
+<script>
+  function setMode(m){
+    document.body.dataset.mode=m;
+    document.getElementById('tab-login').setAttribute('aria-selected', m==='login');
+    document.getElementById('tab-signup').setAttribute('aria-selected', m==='signup');
+  }
+  (function(){
+    var btn=document.getElementById('themeBtn'), label=document.getElementById('themeLabel');
+    function sysDark(){return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches}
+    function cur(){return document.documentElement.dataset.theme || (sysDark()?'dark':'light')}
+    function set(t){document.documentElement.dataset.theme=t; label.textContent=t==='dark'?'Dark':'Light'}
+    btn.addEventListener('click',function(){set(cur()==='dark'?'light':'dark')});
+    label.textContent = sysDark()?'Dark':'Light';
+  })();
+</script>
+</body>
+</html>
