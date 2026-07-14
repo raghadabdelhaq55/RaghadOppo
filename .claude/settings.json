@@ -26,5 +26,31 @@
       "Bash(git push --force:*)",
       "Bash(sudo:*)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const fs=require('fs');const d=JSON.parse(fs.readFileSync(0,'utf8'));const f=(d.tool_input&&d.tool_input.file_path)||(d.tool_response&&d.tool_response.filePath)||'';if(/\\.(js|jsx)$/.test(f))process.stdout.write(f)\" | { read -r f; [ -n \"$f\" ] && npx prettier --write \"$f\"; } 2>/dev/null || true",
+            "statusMessage": "Formatting with Prettier"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit:*)",
+            "command": "branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null); if [ \"$branch\" = \"main\" ]; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Blocked: never commit directly to main. Create a feat/ or fix/ branch first (CLAUDE.md).\"}}'; fi"
+          }
+        ]
+      }
+    ]
   }
 }
